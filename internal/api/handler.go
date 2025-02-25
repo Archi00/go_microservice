@@ -3,9 +3,9 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/Archi00/go_microservice/internal/crawler"
@@ -14,6 +14,18 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 )
+
+type HelloResponse struct {
+	Status  int
+	Message string
+}
+
+func NewHelloResponse(message string) *HelloResponse {
+	return &HelloResponse{
+		Status:  200,
+		Message: message,
+	}
+}
 
 // Handler bundles our job manager for HTTP endpoints.
 type Handler struct {
@@ -27,7 +39,7 @@ func (h *Handler) CreateJobHandler(w http.ResponseWriter, r *http.Request) {
 	var req struct {
 		StartURL string `json:"start_url"`
 	}
-	body, err := os.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
@@ -99,4 +111,10 @@ func (h *Handler) GetJobHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(j)
+}
+
+func (h *Handler) HelloHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	response := NewHelloResponse("Hello World!")
+	json.NewEncoder(w).Encode(response)
 }

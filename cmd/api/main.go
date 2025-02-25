@@ -14,6 +14,7 @@ func main() {
 	handler := &api.Handler{JobManager: jobManager}
 
 	router := mux.NewRouter()
+	router.HandleFunc("/hello", handler.HelloHandler).Methods("GET")
 	router.HandleFunc("/jobs", handler.CreateJobHandler).Methods("POST")
 	router.HandleFunc("/jobs", handler.ListJobsHandler).Methods("GET")
 	router.HandleFunc("/jobs/{id}", handler.GetJobHandler).Methods("GET")
